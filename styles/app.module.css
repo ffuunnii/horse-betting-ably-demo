@@ -1,0 +1,32 @@
+.container {
+  max-height: 100%;
+  position: relative;
+  overflow: auto;
+}
+
+.maincont {
+  display: flex;
+  flex-direction: row;
+  /*max-height: 100vh;*/
+}
+
+.horselist {
+  display: flex;
+  width: 35%;
+}
+
+.horselist ul {
+  background: none;
+}
+
+.horsecard {
+  display: flex;
+  display: flex;
+  width: 65%;
+  align-items: center;
+  justify-content: center;
+}
+
+.housecarddesc {
+  max-width: 500px;
+}
