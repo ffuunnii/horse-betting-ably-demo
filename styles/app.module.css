@@ -12,7 +12,7 @@
 
 .horselist {
   display: flex;
-  width: 35%;
+  width: 50%;
 }
 
 .horselist ul {
@@ -21,10 +21,10 @@
 
 .horsecard {
   display: flex;
-  display: flex;
-  width: 65%;
-  align-items: center;
-  justify-content: center;
+  width: 50%;
+  margin-top: 20px;
+  /*align-items: center;*/
+  /*justify-content: center;*/
 }
 
 .housecarddesc {

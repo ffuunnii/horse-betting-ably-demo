@@ -34,7 +34,7 @@ export default function HorseCard(data) {
   };
 
   return (
-    <Card sx={{ maxWidth: '90%' }}>
+    <Card sx={{ width: '100%' }}>
       <CardHeader
         avatar={
           <Avatar src={`/${data.horse.img}.jpg`} aria-label={data.horse.name}>

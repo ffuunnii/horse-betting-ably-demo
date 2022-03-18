@@ -10,7 +10,7 @@ export default function HorseList(data) {
   return (
     <List sx={{ width: '100%', maxWidth: 450, bgcolor: 'background.paper', maxHeight: '100%', overflow: 'auto' }}>
     {
-        data.raceData.horses.map((horse, index) => <ListItemButton key={index} alignItems="flex-start" onClick={() => data.setHorse(horse)}>
+        data.raceData.horses.map((horse, index) => <ListItemButton key={index} alignItems="flex-start" selected={horse === data.selectedHorse} onClick={() => data.setHorse(horse)}>
             <ListItemAvatar>
                 <Avatar alt={horse.name} src={`/${horse.img}.jpg`} />
             </ListItemAvatar>
