@@ -4,10 +4,14 @@
   overflow: auto;
 }
 
+.main {
+  max-width: 1024px;
+  margin: auto;
+}
+
 .maincont {
   display: flex;
   flex-direction: row;
-  /*max-height: 100vh;*/
 }
 
 .horselist {
@@ -23,10 +27,9 @@
   display: flex;
   width: 50%;
   margin-top: 20px;
-  /*align-items: center;*/
-  /*justify-content: center;*/
 }
 
-.housecarddesc {
-  max-width: 500px;
+.about {
+  padding: 80px;
+  text-align: center;
 }

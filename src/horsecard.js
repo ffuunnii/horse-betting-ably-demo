@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -27,69 +27,44 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function HorseCard(data) {
-  const [expanded, setExpanded] = React.useState(false);
+  const [odds, setOdds] = React.useState(data.horse.odds);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
+  useEffect(
+    () => {
+      setOdds(data.horse.odds)
+    },
+    [data.horse.odds],
+  );
 
   return (
-    <Card sx={{ width: '100%' }}>
+    <Card sx={{ width: '100%', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column'}}>
       <CardHeader
         avatar={
-          <Avatar src={`/${data.horse.img}.jpg`} aria-label={data.horse.name}>
-          </Avatar>
+          <Avatar alt={data.horse.name} src={`/${data.horse.img}.jpg`} />
         }
         title={data.horse.name}
         subheader={
             <React.Fragment>
-                        {`Jockey: `}
-                        <Typography
-                            sx={{ display: 'inline' }}
-                            component="span"
-                            variant="body2"
-                            color="text.primary"
-                        >
-                            {data.horse.jockey}
-                        </Typography>
-                        {` Weight: ${data.horse.weight} `}
-                        {`Age: ${data.horse.age} `}
-                    </React.Fragment>
+              <Typography
+                    sx={{ display: 'inline' }}
+                    component="span"
+                    variant="body2"
+                    color="text.primary"
+              >
+              </Typography>
+            </React.Fragment>
         }
-      />
-      <CardMedia
-        component="img"
-        height="500"
-        width="500"
-        image={`/${data.horse.img}.jpg`}
-        alt="Paella dish"
       />
       <CardContent>
         <Typography variant="h4" color="text.secondary">
-            {`Odds: ${data.horse.odds[0]}/${data.horse.odds[1]}`}
+            {`Odds: ${odds.toFixed(4)}`}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
         <Stack spacing={2} direction="row">
             <Button variant="contained" size="large" onClick={() => data.setBetModalOpened(true)} startIcon={<AttachMoneyIcon />}>Bet now</Button>
         </Stack>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
       </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent className={styles.housecarddesc}>
-          <Typography paragraph>Description:</Typography>
-          <Typography paragraph>
-            {data.horse.desc}
-          </Typography>
-        </CardContent>
-      </Collapse>
     </Card>
   );
 }

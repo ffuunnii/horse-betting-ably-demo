@@ -4,13 +4,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
 
 export default function HorseList(data) {
+
   return (
     <List sx={{ width: '100%', maxWidth: 450, bgcolor: 'background.paper', maxHeight: '100%', overflow: 'auto' }}>
     {
-        data.raceData.horses.map((horse, index) => <ListItemButton key={index} alignItems="flex-start" selected={horse === data.selectedHorse} onClick={() => data.setHorse(horse)}>
+        data.raceData.horses.map((horse, index) => <ListItemButton key={index} alignItems="flex-start" selected={horse.horseId === data.selectedHorseId} onClick={() => data.setHorseId(horse.horseId)}>
             <ListItemAvatar>
                 <Avatar alt={horse.name} src={`/${horse.img}.jpg`} />
             </ListItemAvatar>
@@ -18,22 +18,12 @@ export default function HorseList(data) {
                 primary={
                     <React.Fragment>
                         {horse.name}
-                        {` | Odds: ${horse.odds[0]}/${horse.odds[1]}`}
+                        
                     </React.Fragment>
                 }
                 secondary={
                     <React.Fragment>
-                        {`Jockey: `}
-                        <Typography
-                            sx={{ display: 'inline' }}
-                            component="span"
-                            variant="body2"
-                            color="text.primary"
-                        >
-                            {horse.jockey}
-                        </Typography>
-                        {` Weight: ${horse.weight} `}
-                        {`Age: ${horse.age} `}
+                        {`Odds: ${horse.odds.toFixed(4)}`}
                     </React.Fragment>
                 }
                 />

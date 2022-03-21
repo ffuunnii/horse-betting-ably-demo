@@ -14,30 +14,12 @@ export default function RaceCard(data) {
   return (
     <Card sx={{ display: 'flex' }} style={{backgroundColor: theme.palette.primary.main}}>
       <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%'}}>
-        <CardMedia
-            component="img"
-            sx={{ width: 200 }}
-            image={`/${data.race.img}.jpg`}
-            alt=""
-        />
         <CardContent sx={{ flex: '1 0 auto' }}>
           <Typography component="div" variant="h5" color={theme.palette.primary.contrastText}>
             {data.race.name}
           </Typography>
           <Typography variant="subtitle1" color={theme.palette.primary.contrastText} component="div">
-            {data.race.place}
-          </Typography>
-          <Typography variant="subtitle1" color={theme.palette.primary.contrastText} component="div">
-            {moment(data.race.date).format('dddd D MMMM YYYY, HH:mm')}
-          </Typography>
-          <Typography variant="subtitle1" color={theme.palette.primary.contrastText} component="div">
-            Runners: {data.race.runners}
-          </Typography>
-          <Typography variant="subtitle1" color={theme.palette.primary.contrastText} component="div">
-            Distance: {data.race.distance}
-          </Typography>
-          <Typography variant="subtitle1" color={theme.palette.primary.contrastText} component="div">
-            {data.race.desc}
+            {moment(data.race.startTime).format('dddd D MMMM YYYY, HH:mm')}
           </Typography>
         </CardContent>
         <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
