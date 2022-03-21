@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React  from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic'
 import Button from '@mui/material/Button';
@@ -11,7 +11,7 @@ import Toolbar from '@mui/material/Toolbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useRouter } from 'next/router'
 
-const Main = dynamic(() => import('../src/main'), { ssr: false });
+const Main = dynamic(() => import('../components/main'), { ssr: false });
 
 const theme = createTheme({
   palette: {

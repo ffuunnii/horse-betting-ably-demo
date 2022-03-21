@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import styles from '../styles/app.module.css';
-import HorseList from '../src/horselist';
-import RaceCard from '../src/racecard';
-import HorseCard from '../src/horsecard';
-import BetModal from '../src/bet';
+import HorseList from './horselist';
+import RaceCard from './racecard';
+import HorseCard from './horsecard';
+import BetModal from './bet';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import moment from 'moment';
-import { useChannel } from "../src/AblyReactEffect";
+import { useChannel } from "./AblyReactEffect";
 
 
 function TabPanel(props) {
