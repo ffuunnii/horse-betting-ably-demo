@@ -11,6 +11,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import moment from 'moment';
+import * as oddslib from 'oddslib';
+
 
 const style = {
   position: 'absolute',
@@ -21,7 +23,7 @@ const style = {
   boxShadow: 24,
   p: 4,
   width: '320px',
-  height: '400px',
+  height: '420px',
   display: 'flex',
   flexDirection: 'column',
 };
@@ -29,8 +31,9 @@ const style = {
 export default function BetModal(data) {
   const [open, setOpen] = React.useState(false);
   const [amount, setAmount] = React.useState(1);
-  const [odds, setOdds] = React.useState(1);
   const [accepted, setAccepted] = React.useState(false);
+  const [odds, setOdds] = React.useState([1,1]);
+  const [acceptedOdds, setAcceptedOdds] = React.useState('1/1');
 
   const handleClose = () => {
     setOpen(false);
@@ -39,10 +42,19 @@ export default function BetModal(data) {
     data.setBetModalOpened(false);
   }
 
+
   useEffect(
     () => {
-        setOpen(data.opened);
-        setOdds(data.horse.odds);
+      let oddsStr = oddslib.from('malay', data.horse.odds).to('fractional', {precision: 2});
+      setOdds([parseInt(oddsStr.split('/')[1]), parseInt(oddsStr.split('/')[0])]);
+    },
+    [data.horse.odds]
+  );
+  
+
+  useEffect(
+    () => {
+      setOpen(data.opened);
     },
     [data.opened],
   );
@@ -61,7 +73,7 @@ export default function BetModal(data) {
           </IconButton>
           {accepted === false && <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column'}}>
             <Typography id="modal-modal-title" variant="h6" component="h2">{data.horse.name}</Typography>
-            <Typography sx={{ m: 2 }}>{`Odds: ${odds}`}</Typography>
+            <Typography sx={{ m: 2 }}>{`Odds: ${odds[0]}/${odds[1]}`}</Typography>
             <TextField sx={{ m: 2 }}
               label="Bet"
               value={amount}
@@ -75,13 +87,14 @@ export default function BetModal(data) {
               }}
               variant="standard"
             />
-            <Typography sx={{ m: 2 }}>Amount you will win: ${(amount*(1/odds)).toLocaleString(undefined, {maximumFractionDigits:2}) }</Typography>
-            <Button variant="contained" size="large" onClick={() => setAccepted(true)}>Place bet</Button>
+            <Typography sx={{ m: 1 }}>Amount you will win:</Typography>
+            <Typography sx={{ m: 1 }}>${(amount*(odds[0]/odds[1])).toLocaleString(undefined, {maximumFractionDigits:2}) }</Typography>
+            <Button variant="contained" size="large" onClick={() => {setAccepted(true); setAcceptedOdds(`${odds[0]}/${odds[1]}`)}}>Place bet</Button>
           </div>}
           {accepted === true && <div>
             <Alert severity="success">
             <AlertTitle>Bet <strong>accepted</strong></AlertTitle>
-              At {odds.toFixed(4)} for {data.horse.name} on {moment().format('dddd D MMMM YYYY, HH:mm')}    
+              At {acceptedOdds} for {data.horse.name} on {moment().format('dddd D MMMM YYYY, HH:mm')}    
             </Alert>
           </div>}
         </Box>

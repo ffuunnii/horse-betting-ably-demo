@@ -10,7 +10,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import moment from 'moment';
 import { useChannel } from "./AblyReactEffect";
-
+import horseData from './horses.json';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -39,6 +39,7 @@ TabPanel.propTypes = {
 };
 
 export default function Main() {
+  const [horseMockDataPairing, setHorseMockDataPairing] = useState();
   const [racesData, setRacesData] = useState();
   const [raceId, setRaceId] = useState(0);
   const [horseId, setHorseId] = useState();
@@ -47,6 +48,7 @@ export default function Main() {
   const [channel, ably] = useChannel("Outbound:HorseRacing:test", (message) => {
     let racesDataNew = JSON.parse(message.data);
     setRacesData(racesDataNew);
+    updateHorseMockDataPairing(racesDataNew.horseRaces);
     if (!horseId) {
       setHorseId(racesDataNew.horseRaces[0].horses[0].horseId);
     }
@@ -56,6 +58,36 @@ export default function Main() {
     setRaceId(newValue);
     setHorseId(racesData.horseRaces[newValue].horses[0].horseId)
   };
+
+  const updateHorseMockDataPairing = (racesDataNew) => {
+    let horseMockDataPairingNew = {};
+    if (!horseMockDataPairing) {
+      for (let race of racesDataNew) {
+        if (!horseMockDataPairingNew[race.raceId]) horseMockDataPairingNew[race.raceId] = {};
+        for (let horse of race.horses) {
+          if (horseMockDataPairingNew[race.raceId][horse.horseId] === undefined) horseMockDataPairingNew[race.raceId][horse.horseId] = getNewRandomNumber(horseMockDataPairingNew[race.raceId]);
+        }
+      }
+      setHorseMockDataPairing(horseMockDataPairingNew);
+    } else {
+      horseMockDataPairingNew = { ...horseMockDataPairing };
+      for (let race of racesDataNew) {
+        if (!horseMockDataPairingNew[race.raceId]) horseMockDataPairingNew[race.raceId] = {};
+        for (let horse of race.horses) {
+          if (horseMockDataPairingNew[race.raceId][horse.horseId] === undefined) horseMockDataPairingNew[race.raceId][horse.horseId] = getNewRandomNumber(horseMockDataPairingNew[race.raceId]);
+        }
+      }
+      setHorseMockDataPairing(horseMockDataPairingNew);
+    }
+  }
+
+  const getNewRandomNumber = (o) => {
+    let n = 0;
+    do {
+      n = Math.floor(Math.random() * horseData.length);
+    } while (Object.values(o).indexOf(n) > -1);
+    return n;
+  }
   
   return (
     <div className={styles.container}>
@@ -69,17 +101,17 @@ export default function Main() {
               />
             ))}
           </Tabs>
-          {racesData && racesData.horseRaces.map((race, index) => (
+          {racesData && horseMockDataPairing && racesData.horseRaces.map((race, index) => (
             <TabPanel key={index} value={raceId} index={index}>
               {horseId && <BetModal opened={betModalOpened} setBetModalOpened={setBetModalOpened} horse={race.horses.find(h => h.horseId === horseId)}></BetModal>}
               <div>
                 <RaceCard race={race}></RaceCard>
                 <div className={styles.maincont}>
                   <div className={styles.horselist}>
-                    <HorseList selectedHorseId={horseId} setHorseId={setHorseId} raceData={race}></HorseList>
+                    <HorseList horseMockDataPairing={horseMockDataPairing[race.raceId]} selectedHorseId={horseId} setHorseId={setHorseId} raceData={race}></HorseList>
                   </div>
                   <div className={styles.horsecard}>
-                    {horseId && <HorseCard horse={race.horses.find(h => h.horseId === horseId)} setBetModalOpened={setBetModalOpened}></HorseCard>}
+                    {horseId && <HorseCard horseMockDataPairing={horseMockDataPairing[race.raceId]} horse={race.horses.find(h => h.horseId === horseId)} setBetModalOpened={setBetModalOpened}></HorseCard>}
                   </div>
                 </div>
               </div>
