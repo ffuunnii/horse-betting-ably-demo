@@ -33,3 +33,38 @@
   padding: 80px;
   text-align: center;
 }
+
+.racetab {
+  display: flex;
+  flex-direction: row;
+}
+
+.prerace {
+  color: white;
+  font-size: 10px;
+  background-color: orange;
+  vertical-align: top;
+  padding: 4px;
+  border-radius: 6px;
+  margin-left: 5px;
+}
+
+.race {
+  color: white;
+  font-size: 10px;
+  background-color: green;
+  vertical-align: top;
+  padding: 4px;
+  border-radius: 6px;
+  margin-left: 5px;
+}
+
+.postrace {
+  color: white;
+  font-size: 10px;
+  background-color: lightblue;
+  vertical-align: top;
+  padding: 4px;
+  border-radius: 6px;
+  margin-left: 5px;
+}

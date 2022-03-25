@@ -38,14 +38,14 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function Main() {
+export default function Main(data) {
   const [horseMockDataPairing, setHorseMockDataPairing] = useState();
   const [racesData, setRacesData] = useState();
   const [raceId, setRaceId] = useState();
   const [horseId, setHorseId] = useState();
   const [betModalOpened, setBetModalOpened] = useState(false);
 
-  const [channel, ably] = useChannel("Outbound:HorseRacing:test", (message) => {
+  const [channel, ably] = useChannel(data.ably, "Outbound:HorseRacing:test", (message) => {
     let racesDataNew = JSON.parse(message.data);
     console.log(racesDataNew);
     racesDataNew.horseRaces.sort(function (a, b) {
@@ -124,6 +124,26 @@ export default function Main() {
     } while (Object.values(o).indexOf(n) > -1);
     return n;
   }
+
+  const generateRaceStatus = (s, e) => {
+    const now = moment().unix();
+    //console.log("start ", s, " now ", now, " end ", e);
+    //console.log("s < now", s < now);
+    //console.log("s > now && e < now", s > now && e < now);
+    let status = '';
+    let classToAply = '';
+    if (s < now) { // now is before the startTime
+      status = "pre-race";
+      classToAply = styles.prerace;
+    } else if (s > now && now < e) { // now is after the starttime AND now is before the endTime
+      status = "race";
+      classToAply = styles.race;
+    } else { 
+      status = "post-race";
+      classToAply = styles.postrace;
+    }
+    return <span className={classToAply}>{status}</span>;
+  }
   
   return (
     <div className={styles.container}>
@@ -131,7 +151,8 @@ export default function Main() {
           {racesData && racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId)) !== -1 && <Tabs value={racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId))} onChange={handleChange}>
             {racesData && racesData.horseRaces.map((race, index) => (
               <Tab
-                label={`${race.name} (${moment.unix(race.startTime).format('DD. MM. - HH:mm')})`}
+                className={styles.racetab}
+                label={<React.Fragment><span>{`${race.name} (${moment.unix(race.startTime).format('HH:mm')})`}</span>{generateRaceStatus(race.startTime, race.endTime)}</React.Fragment>}
                 key={index}
                 aria-controls={`simple-tabpanel-${index}`}
               />

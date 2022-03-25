@@ -1,9 +1,12 @@
 import Ably from "ably/promises";
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
-const ably = new Ably.Realtime.Promise({ authUrl: '/api/auth' });
+function setAndGetClient(clientId) {
+    const ably = new Ably.Realtime.Promise({ authUrl: '/api/auth', clientId: clientId, closeOnUnload: true });
+    return ably;
+}
 
-export function useChannel(channelName, callbackOnMessage) {
+function useChannel(ably, channelName, callbackOnMessage) {
     const channel = ably.channels.get(channelName);
 
     const onMount = () => {
@@ -23,3 +26,5 @@ export function useChannel(channelName, callbackOnMessage) {
 
     return [channel, ably];
 }
+
+export { useChannel, setAndGetClient }

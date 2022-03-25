@@ -10,7 +10,8 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import { setAndGetClient } from "../components/AblyReactEffect";
 
 const Main = dynamic(() => import('../components/main'), { ssr: false });
 
@@ -88,13 +89,15 @@ const generateUserName = async () => {
 
 export default function Home() {
   const [username, setUsername] = useState('');
+  const [ably, setAbly] = useState();
 
   useEffect(() => {
     generateUserName().then(name => {
       let firstname = name.split(' ')[0];
       let lastname = name.split(' ')[1];
       let usernameNew = `${firstname[0].toUpperCase()}${firstname.substr(1)} ${lastname[0].toUpperCase()}${lastname.substr(1)}`;
-      console.log(usernameNew);
+      const ablyNew = setAndGetClient(usernameNew);
+      setAbly(ablyNew)
       setUsername(usernameNew);
     });
   }, []);
@@ -117,7 +120,7 @@ export default function Home() {
             <Typography sx={{margin: 2}} component="span" variant="body2">{username}</Typography>
           </Toolbar>
         </AppBar>
-        <Main></Main>
+        {ably && <Main ably={ably}></Main>}
       </ThemeProvider>
     </div>
   )

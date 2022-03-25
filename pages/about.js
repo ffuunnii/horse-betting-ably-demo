@@ -56,10 +56,9 @@ export default function About() {
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Horse betting
+              <Button color="inherit"><Link href="/">Home</Link></Button>
+              <Button color="inherit"><Link href="/about">About</Link></Button>
             </Typography>
-            <Button color="inherit"><Link href="/">Home</Link></Button>
-            <Button color="inherit"><Link href="/about">About</Link></Button>
           </Toolbar>
         </AppBar>
         <div className={styles.about}>
