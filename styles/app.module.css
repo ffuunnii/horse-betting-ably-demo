@@ -34,11 +34,6 @@
   text-align: center;
 }
 
-.racetab {
-  display: flex;
-  flex-direction: row;
-}
-
 .prerace {
   color: white;
   font-size: 10px;

@@ -151,8 +151,7 @@ export default function Main(data) {
           {racesData && racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId)) !== -1 && <Tabs value={racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId))} onChange={handleChange}>
             {racesData && racesData.horseRaces.map((race, index) => (
               <Tab
-                className={styles.racetab}
-                label={<React.Fragment><span>{`${race.name} (${moment.unix(race.startTime).format('HH:mm')})`}</span>{generateRaceStatus(race.startTime, race.endTime)}</React.Fragment>}
+                label={<React.Fragment><div><span>{`${race.name} (${moment.unix(race.startTime).format('HH:mm')})`}</span>{generateRaceStatus(race.startTime, race.endTime)}</div></React.Fragment>}
                 key={index}
                 aria-controls={`simple-tabpanel-${index}`}
               />
