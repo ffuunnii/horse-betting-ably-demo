@@ -9,5 +9,5 @@ export default async function handler(req, res) {
     //   res.status(200).send(error.stack);
     // }
 
-    res.status(200).send(process.env.ABLY_API_KEY);
+    res.status(200).json({test: "test", ablykey: process.env.ABLY_API_KEY});
   };
