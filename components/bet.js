@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -29,11 +29,11 @@ const style = {
 };
 
 export default function BetModal(data) {
-  const [open, setOpen] = React.useState(false);
-  const [amount, setAmount] = React.useState(1);
-  const [accepted, setAccepted] = React.useState(false);
-  const [odds, setOdds] = React.useState([1,1]);
-  const [acceptedOdds, setAcceptedOdds] = React.useState('1/1');
+  const [open, setOpen] = useState(false);
+  const [amount, setAmount] = useState(1);
+  const [accepted, setAccepted] = useState(false);
+  const [odds, setOdds] = useState([1,1]);
+  const [acceptedOdds, setAcceptedOdds] = useState('1/1');
 
   const handleClose = () => {
     setOpen(false);
@@ -45,10 +45,19 @@ export default function BetModal(data) {
 
   useEffect(
     () => {
-      let oddsStr = oddslib.from('malay', data.horse.odds).to('fractional', {precision: 2});
-      setOdds([parseInt(oddsStr.split('/')[1]), parseInt(oddsStr.split('/')[0])]);
+      if (data.horse.odds) {
+        let oddsStr = oddslib.from('malay', data.horse.odds).to('fractional', {precision: 2});
+        setOdds([parseInt(oddsStr.split('/')[1]), parseInt(oddsStr.split('/')[0])]);
+      }
     },
     [data.horse.odds]
+  );
+
+  useEffect(
+    () => {
+      if (Object.keys(data.horse).length === 0) handleClose();
+    },
+    [data.horse]
   );
   
 

@@ -18,7 +18,7 @@ export default function RaceCard(data) {
             {data.race.name}
           </Typography>
           <Typography variant="subtitle1" color={theme.palette.primary.contrastText} component="div">
-            {moment(data.race.startTime).format('dddd D MMMM YYYY, HH:mm')}
+            {moment.unix(data.race.startTime).format('dddd D MMMM YYYY, HH:mm')}
           </Typography>
         </CardContent>
         <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>

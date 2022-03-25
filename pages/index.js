@@ -1,4 +1,4 @@
-import React  from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import dynamic from 'next/dynamic'
 import Button from '@mui/material/Button';
@@ -9,6 +9,7 @@ import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useRouter } from 'next/router'
 
 const Main = dynamic(() => import('../components/main'), { ssr: false });
@@ -77,9 +78,27 @@ const Link = ({ children, href }) => {
       `}</style>
     </a>
   )
-}
+};
+
+const generateUserName = async () => {
+  const response = await fetch('https://random-word-api.herokuapp.com/word?number=2&swear=0');
+  const name = await response.json();
+  return `${name[0]} ${name[1]}`;
+};
 
 export default function Home() {
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    generateUserName().then(name => {
+      let firstname = name.split(' ')[0];
+      let lastname = name.split(' ')[1];
+      let usernameNew = `${firstname[0].toUpperCase()}${firstname.substr(1)} ${lastname[0].toUpperCase()}${lastname.substr(1)}`;
+      console.log(usernameNew);
+      setUsername(usernameNew);
+    });
+  }, []);
+
   return (
     <div className={styles.container}>
       <ThemeProvider theme={theme}>
@@ -91,10 +110,11 @@ export default function Home() {
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Horse betting
+              <Button color="inherit"><Link href="/">Home</Link></Button>
+              <Button color="inherit"><Link href="/about">About</Link></Button>
             </Typography>
-            <Button color="inherit"><Link href="/">Home</Link></Button>
-            <Button color="inherit"><Link href="/about">About</Link></Button>
+            <AccountCircle></AccountCircle>
+            <Typography sx={{margin: 2}} component="span" variant="body2">{username}</Typography>
           </Toolbar>
         </AppBar>
         <Main></Main>
