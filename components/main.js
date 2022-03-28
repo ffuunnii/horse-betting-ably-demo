@@ -140,15 +140,12 @@ export default function Main(data) {
 
   const generateRaceStatus = (s, e) => {
     const now = moment().unix();
-    // console.log("start ", s, " now ", now, " end ", e);
-    // console.log("s < now", s < now);
-    // console.log("s < now && now < e", s < now && now < e);
     let status = '';
     let classToAply = '';
-    if (s < now) { // now is before the startTime
+    if (now < s) {
       status = "pre-race";
       classToAply = styles.prerace;
-    } else if (s < now && now < e) { // now is after the starttime AND now is before the endTime
+    } else if (s < now && now < e) {
       status = "race";
       classToAply = styles.race;
     } else { 
