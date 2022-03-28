@@ -24,7 +24,7 @@ function useChannel(ably, channelName, callbackOnMessage) {
 
     useEffect(useEffectHook);
 
-    return [channel, ably];
+    return channel;
 }
 
 export { useChannel, setAndGetClient }

@@ -44,12 +44,22 @@ export default function Main(data) {
   const [raceId, setRaceId] = useState();
   const [horseId, setHorseId] = useState();
   const [betModalOpened, setBetModalOpened] = useState(false);
+  const [channel, setChannel] = useState();
 
-  const [channel, ably] = useChannel(data.ably, "Outbound:HorseRacing:test", (message) => {
+  useEffect(() => {
+    if (raceId && racesData && channel) {
+      const raceName = racesData.horseRaces.find(r => r.raceId ===raceId).name;
+      channel.presence.enter(raceName, function(err) {
+        if(err) return console.error("Error entering presence");
+      });
+    }
+  }, [raceId, channel]);
+
+  const channelHorseRacing = useChannel(data.ably, "Outbound:HorseRacing:test", (message) => {
     let racesDataNew = JSON.parse(message.data);
     console.log(racesDataNew);
     racesDataNew.horseRaces.sort(function (a, b) {
-      return b.startTime - a.startTime;
+      return a.startTime - b.startTime;
     });
     setRacesData(racesDataNew);
     updateHorseMockDataPairing(racesDataNew.horseRaces);
@@ -62,6 +72,9 @@ export default function Main(data) {
       setHorse(racesDataNew.horseRaces[racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId))].horses[0].horseId);
     }
   });
+  if (channel === undefined) {
+    setChannel(channelHorseRacing);
+  }
 
   const handleChange = (event, newValue) => {
     setRaceId(racesData.horseRaces[newValue].raceId);
@@ -127,15 +140,15 @@ export default function Main(data) {
 
   const generateRaceStatus = (s, e) => {
     const now = moment().unix();
-    //console.log("start ", s, " now ", now, " end ", e);
-    //console.log("s < now", s < now);
-    //console.log("s > now && e < now", s > now && e < now);
+    // console.log("start ", s, " now ", now, " end ", e);
+    // console.log("s < now", s < now);
+    // console.log("s < now && now < e", s < now && now < e);
     let status = '';
     let classToAply = '';
     if (s < now) { // now is before the startTime
       status = "pre-race";
       classToAply = styles.prerace;
-    } else if (s > now && now < e) { // now is after the starttime AND now is before the endTime
+    } else if (s < now && now < e) { // now is after the starttime AND now is before the endTime
       status = "race";
       classToAply = styles.race;
     } else { 
