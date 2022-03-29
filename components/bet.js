@@ -23,7 +23,7 @@ const style = {
   boxShadow: 24,
   p: 4,
   width: '320px',
-  height: '420px',
+  height: '440px',
   display: 'flex',
   flexDirection: 'column',
 };
@@ -40,8 +40,13 @@ export default function BetModal(data) {
     setAccepted(false);
     setAmount(1);
     data.setBetModalOpened(false);
-  }
+  };
 
+  const setButtonText = (status) => {
+    if (status === 'prerace') return 'Place bet'; 
+    else if (status === 'race') return 'Betting on this race has closed. The race is now running.';
+    else return 'Betting on this race has closed. The race has run.';
+  };
 
   useEffect(
     () => {
@@ -84,6 +89,7 @@ export default function BetModal(data) {
             <Typography id="modal-modal-title" variant="h6" component="h2">{data.horse.name}</Typography>
             <Typography sx={{ m: 2 }}>{`Odds: ${odds[0]}/${odds[1]}`}</Typography>
             <TextField sx={{ m: 2 }}
+              disabled={data.race.status !== 'prerace'}
               label="Bet"
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
@@ -98,7 +104,7 @@ export default function BetModal(data) {
             />
             <Typography sx={{ m: 1 }}>Amount you will win:</Typography>
             <Typography sx={{ m: 1 }}>${(amount*(odds[0]/odds[1])).toLocaleString(undefined, {maximumFractionDigits:2}) }</Typography>
-            <Button variant="contained" size="large" onClick={() => {setAccepted(true); setAcceptedOdds(`${odds[0]}/${odds[1]}`)}}>Place bet</Button>
+            <Button variant="contained" size="small" onClick={() => {setAccepted(true); setAcceptedOdds(`${odds[0]}/${odds[1]}`)}} disabled={data.race.status !== 'prerace'}>{setButtonText(data.race.status)}</Button>
           </div>}
           {accepted === true && <div>
             <Alert severity="success">

@@ -10,12 +10,17 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import Stack from '@mui/material/Stack';
+import Badge from '@mui/material/Badge';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Button from '@mui/material/Button';
 import styles from '../styles/app.module.css';
 import * as oddslib from 'oddslib';
 import horseData from './horses.json';
+import Stack from '@mui/material/Stack';
+
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -28,15 +33,15 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-const calculateOdds = (decimalOdds) => {
-  const precision = 0.05;
-  for (let i = 1; i < 1000; i++) {
-    let r = i/decimalOdds%1;
-    if (r < precision) {
-      return `${Math.floor(i/decimalOdds)}/${i}`;
-    }
-  }
-};
+// const calculateOdds = (decimalOdds) => {
+//   const precision = 0.05;
+//   for (let i = 1; i < 1000; i++) {
+//     let r = i/decimalOdds%1;
+//     if (r < precision) {
+//       return `${Math.floor(i/decimalOdds)}/${i}`;
+//     }
+//   }
+// };
 
 export default function HorseCard(data) {
   const [odds, setOdds] = React.useState([1,1]);
@@ -44,6 +49,12 @@ export default function HorseCard(data) {
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const setButtonText = (status) => {
+    if (status === 'prerace') return 'Place bet'; 
+    else if (status === 'race') return 'Betting on this race has closed. The race is now running.';
+    else return 'Betting on this race has closed. The race has run.';
   };
 
   useEffect(
@@ -56,12 +67,22 @@ export default function HorseCard(data) {
   );
 
   return (
-    <Card sx={{ width: '100%', margin: 'auto'}}>
+    <Card sx={{ width: '100%', background: (data.race.status === 'postrace' && data.horse.position === 1) && '#f3e5ab', boxSizing: 'border-box'}}>
       <CardHeader
         avatar={
-          <Avatar alt={data.horse.name} src={`/${horseData[data.horseMockDataPairing[data.horse.horseId]].img}.jpg`} />
+          <Badge
+                overlap="circular"
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                badgeContent={
+                  <React.Fragment>{(data.horse.position === 1 && data.race.status === 'postrace') && <EmojiEventsIcon sx={{background: 'white', borderRadius: '50%', padding: '2px', color: '#daa520'}}></EmojiEventsIcon>}</React.Fragment>
+                }
+              >
+              <Avatar alt={data.horse.name} src={`/${horseData[data.horseMockDataPairing[data.horse.horseId]].img}.jpg`} />
+          </Badge>
         }
-        title={data.horse.name}
+        title={<React.Fragment>
+          <span style={{fontWeight: (data.horse.position === 1 && data.race.status === 'postrace') ? 'bold' : 'normal'}}>{data.horse.name}</span>
+        </React.Fragment>}
         subheader={
           <React.Fragment>
             {`Jockey: `}
@@ -80,14 +101,27 @@ export default function HorseCard(data) {
         alt="Paella dish"
       />
       <CardContent>
-        <Typography variant="h4" color="text.secondary">
-            {`Odds: ${odds[0]}/${odds[1]}`}
-        </Typography>
+        {data.race.status === 'prerace' && <Stack direction="row" spacing={2} alignItems="center">
+          <MonetizationOnIcon htmlColor='orange' fontSize="large"></MonetizationOnIcon>
+          <Typography variant="h4" color="text.secondary">
+              {`Odds: ${odds[0]}/${odds[1]}`}
+          </Typography>
+        </Stack>}
+        {data.race.status === 'race' && <Stack direction="row" spacing={2} alignItems="center">
+          <FormatListNumberedIcon htmlColor='green' fontSize="large"></FormatListNumberedIcon>
+          <Typography variant="h4" color="text.secondary">
+            {`Position: ${data.horse.position}`} <span style={{color: 'lightgrey'}}>{`(Odds: ${odds[0]}/${odds[1]})`}</span>
+          </Typography>
+        </Stack>}
+        {data.race.status === 'postrace' && <Stack direction="row" spacing={2} alignItems="center">
+          <MilitaryTechIcon htmlColor={(data.horse.position === 1 && data.race.status === 'postrace') ? '#daa520' : 'lightblue'} fontSize="large"></MilitaryTechIcon>
+          <Typography variant="h4" color="text.secondary">
+              {`Result: ${data.horse.position}`} <span style={{color: (data.horse.position === 1 && data.race.status === 'postrace') ? '#daa520' : 'lightgrey'}}>{`(Odds: ${odds[0]}/${odds[1]})`}</span>
+          </Typography>
+        </Stack>}
       </CardContent>
       <CardActions disableSpacing>
-        <Stack spacing={2} direction="row">
-            <Button variant="contained" size="large" onClick={() => data.setBetModalOpened(true)} startIcon={<AttachMoneyIcon />}>Place bet</Button>
-        </Stack>
+        <Button variant="contained" size="small" onClick={() => data.setBetModalOpened(true)} disabled={data.race.status !== 'prerace'}>{setButtonText(data.race.status)}</Button>
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}

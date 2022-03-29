@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 import moment from 'moment';
 import { useChannel } from "./AblyReactEffect";
 import horseData from './horses.json';
@@ -61,6 +62,11 @@ export default function Main(data) {
     racesDataNew.horseRaces.sort(function (a, b) {
       return a.startTime - b.startTime;
     });
+    for (let index in racesDataNew.horseRaces) {
+      let [classToAply, status] = generateRaceStatusClassName(racesDataNew.horseRaces[index].startTime, racesDataNew.horseRaces[index].endTime); 
+      racesDataNew.horseRaces[index].status = status;
+      racesDataNew.horseRaces[index].classToAply = classToAply;
+    }
     setRacesData(racesDataNew);
     updateHorseMockDataPairing(racesDataNew.horseRaces);
 
@@ -138,52 +144,55 @@ export default function Main(data) {
     return n;
   }
 
-  const generateRaceStatus = (s, e) => {
+  const generateRaceStatusClassName = (s, e) => {
     const now = moment().unix();
-    let status = '';
     let classToAply = '';
+    let status = '';
     if (now < s) {
-      status = "pre-race";
       classToAply = styles.prerace;
+      status = 'prerace';
     } else if (s < now && now < e) {
-      status = "race";
       classToAply = styles.race;
+      status = 'race';
     } else { 
-      status = "post-race";
       classToAply = styles.postrace;
+      status = 'postrace';
     }
-    return <span className={classToAply}>{status}</span>;
+    return [classToAply, status];
   }
   
   return (
     <div className={styles.container}>
-        <div className={styles.main}>
-          {racesData && racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId)) !== -1 && <Tabs value={racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId))} onChange={handleChange}>
-            {racesData && racesData.horseRaces.map((race, index) => (
-              <Tab
-                label={<React.Fragment><div><span>{`${race.name} (${moment.unix(race.startTime).format('HH:mm')})`}</span>{generateRaceStatus(race.startTime, race.endTime)}</div></React.Fragment>}
-                key={index}
-                aria-controls={`simple-tabpanel-${index}`}
-              />
-            ))}
-          </Tabs>}
-          {horseId && racesData.horseRaces.find(r => r.raceId === raceId) && racesData.horseRaces.find(r => r.raceId === raceId).horses && <BetModal opened={betModalOpened} setBetModalOpened={setBetModalOpened} horse={racesData.horseRaces.find(r => r.raceId === raceId).horses.find(h => h.horseId === horseId) || {}}></BetModal>}
-          {racesData && horseMockDataPairing && racesData.horseRaces.map((race, index) => (
-            <TabPanel key={index} value={racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === race.raceId))} index={racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId))}>
-              <div>
-                <RaceCard race={race}></RaceCard>
-                <div className={styles.maincont}>
-                  <div className={styles.horselist}>
-                    {horseMockDataPairing[race.raceId] && <HorseList horseMockDataPairing={horseMockDataPairing[race.raceId]} selectedHorseId={horseId} setHorseId={setHorse} raceData={race}></HorseList>}
-                  </div>
-                  <div className={styles.horsecard}>
-                    {horseId && race.horses.find(h => h.horseId === horseId) && <HorseCard horseMockDataPairing={horseMockDataPairing[race.raceId]} horse={race.horses.find(h => h.horseId === horseId)} setBetModalOpened={setBetModalOpened}></HorseCard>}
-                  </div>
+      <div className={styles.main}>
+        {!racesData && <Box sx={{ display: 'flex', width: '100%', height: 'calc(100vh - 64px)'}} alignItems="center" justifyContent="center">
+          <CircularProgress size="4rem" />
+        </Box>}
+        {racesData && racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId)) !== -1 && <Tabs value={racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId))} onChange={handleChange}>
+          {racesData && racesData.horseRaces.map((race, index) => (
+            <Tab className={race.classToAply}
+              label={<React.Fragment><div><span className={styles.racename}>{`${race.name} (${moment.unix(race.startTime).format('HH:mm')})`}</span><span className={styles.racestatus}></span></div></React.Fragment>}
+              key={index}
+              aria-controls={`simple-tabpanel-${index}`}
+            />
+          ))}
+        </Tabs>}
+        {horseId && racesData.horseRaces.find(r => r.raceId === raceId) && racesData.horseRaces.find(r => r.raceId === raceId).horses && <BetModal opened={betModalOpened} setBetModalOpened={setBetModalOpened} race={racesData.horseRaces.find(r => r.raceId === raceId)} horse={racesData.horseRaces.find(r => r.raceId === raceId).horses.find(h => h.horseId === horseId) || {}}></BetModal>}
+        {racesData && horseMockDataPairing && racesData.horseRaces.map((race, index) => (
+          <TabPanel key={index} value={racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === race.raceId))} index={racesData.horseRaces.indexOf(racesData.horseRaces.find(r => r.raceId === raceId))}>
+            <div>
+              <RaceCard race={race}></RaceCard>
+              <div className={styles.maincont}>
+                <div className={styles.horselist}>
+                  {horseMockDataPairing[race.raceId] && <HorseList horseMockDataPairing={horseMockDataPairing[race.raceId]} selectedHorseId={horseId} setHorseId={setHorse} race={race}></HorseList>}
+                </div>
+                <div className={styles.horsecard}>
+                  {horseId && race.horses.find(h => h.horseId === horseId) && <HorseCard horseMockDataPairing={horseMockDataPairing[race.raceId]} horse={race.horses.find(h => h.horseId === horseId)} race={race} setBetModalOpened={setBetModalOpened}></HorseCard>}
                 </div>
               </div>
-            </TabPanel>
-          ))}
-        </div>
+            </div>
+          </TabPanel>
+        ))}
+      </div>
     </div>
   )
 }

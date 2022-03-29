@@ -16,7 +16,7 @@
 
 .horselist {
   display: flex;
-  width: 50%;
+  width: 45%;
 }
 
 .horselist ul {
@@ -25,8 +25,8 @@
 
 .horsecard {
   display: flex;
-  width: 50%;
-  margin-top: 20px;
+  width: 55%;
+  margin-top: 10px;
 }
 
 .about {
@@ -34,32 +34,47 @@
   text-align: center;
 }
 
-.prerace {
+
+span.racestatus:after {
   color: white;
   font-size: 10px;
+  vertical-align: top;
+  padding: 4px;
+  border-radius: 6px;
+  margin-left: 5px;
+}
+
+.prerace span.racestatus:after {
   background-color: orange;
-  vertical-align: top;
-  padding: 4px;
-  border-radius: 6px;
-  margin-left: 5px;
+  content: 'Pre-race';
 }
 
-.race {
-  color: white;
-  font-size: 10px;
+.race span.racestatus:after {
   background-color: green;
-  vertical-align: top;
-  padding: 4px;
-  border-radius: 6px;
-  margin-left: 5px;
+  content: 'Race';
 }
 
-.postrace {
-  color: white;
-  font-size: 10px;
+.postrace span.racestatus:after {
   background-color: lightblue;
-  vertical-align: top;
-  padding: 4px;
-  border-radius: 6px;
-  margin-left: 5px;
+  content: 'Post-race';
+}
+
+.race span.racename {
+  font-weight: bold;
+}
+
+.prerace span.racename {
+  opacity: 0.75;
+}
+
+div.prerace {
+  border-bottom: solid 10px orange;
+}
+
+div.race {
+  border-bottom: solid 10px green;
+}
+
+div.postrace {
+  border-bottom: solid 10px lightblue;
 }
