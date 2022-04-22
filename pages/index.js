@@ -82,7 +82,7 @@ const Link = ({ children, href }) => {
 };
 
 const generateUserName = async () => {
-  const response = await fetch('https://random-word-api.herokuapp.com/word?number=2&swear=0');
+  const response = await fetch('https://random-word-api.herokuapp.com/word?number=2');
   const name = await response.json();
   return `${name[0]} ${name[1]}`;
 };
